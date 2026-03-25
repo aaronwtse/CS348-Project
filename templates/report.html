@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<body>
+  <h1>Match Report</h1>
+  <a href="/">Home</a>
+
+  <br><br>
+
+  <form method="GET">
+    <label>Club</label><br>
+    <select name="club_id">
+      <option value="">-- Select Club --</option>
+      {% for c in clubs %}
+      <option value="{{ c['club_id'] }}" {{ 'selected' if request.args.get('club_id') == c['club_id']|string }}>
+        {{ c['name'] }}
+      </option>
+      {% endfor %}
+    </select><br><br>
+
+    <label>From</label><br>
+    <input type="date" name="date_from" value="{{ request.args.get('date_from', '') }}"><br><br>
+
+    <label>To</label><br>
+    <input type="date" name="date_to" value="{{ request.args.get('date_to', '') }}"><br><br>
+
+    <button type="submit">Run Report</button>
+  </form>
+
+  <br>
+
+  {% if matches %}
+    <p>{{ matches|length }} match(es) found.</p>
+    <table border="1">
+      <tr>
+        <th>Date</th>
+        <th>Home</th>
+        <th>Away</th>
+        <th>Score</th>
+        <th>Venue</th>
+        <th>Status</th>
+      </tr>
+      {% for m in matches %}
+      <tr>
+        <td>{{ m['match_date'] }}</td>
+        <td>{{ m['home_name'] }}</td>
+        <td>{{ m['away_name'] }}</td>
+        <td>{{ m['home_score'] }} - {{ m['away_score'] }}</td>
+        <td>{{ m['venue'] }}</td>
+        <td>{{ m['status'] }}</td>
+      </tr>
+      {% endfor %}
+    </table>
+  {% elif request.args.get('club_id') %}
+    <p>No matches found.</p>
+  {% endif %}
+
+</body>
+</html>

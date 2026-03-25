@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<body>
+  <h1>{{ 'Edit Player' if player else 'Add Player' }}</h1>
+  <a href="/players">Back to Players</a>
+
+  <br><br>
+
+  <form method="POST">
+    <label>Name</label><br>
+    <input type="text" name="name" value="{{ player['name'] if player else '' }}" required><br><br>
+
+    <label>Age</label><br>
+    <input type="number" name="age" value="{{ player['age'] if player else '' }}" required><br><br>
+
+    <label>Nationality</label><br>
+    <input type="text" name="nationality" value="{{ player['nationality'] if player else '' }}" required><br><br>
+
+    <label>Strong Foot</label><br>
+    <select name="strong_foot">
+      <option value="Right"  {{ 'selected' if player and player['strong_foot'] == 'Right'  }}>Right</option>
+      <option value="Left"   {{ 'selected' if player and player['strong_foot'] == 'Left'   }}>Left</option>
+      <option value="Both"   {{ 'selected' if player and player['strong_foot'] == 'Both'   }}>Both</option>
+    </select><br><br>
+
+    <label>Jersey Number</label><br>
+    <input type="number" name="jersey_number" value="{{ player['jersey_number'] if player else '' }}"><br><br>
+
+    <label>Club</label><br>
+    <select name="club_id">
+      <option value="">-- Select Club --</option>
+      {% for c in clubs %}
+      <option value="{{ c['club_id'] }}" {{ 'selected' if player and player['club_id'] == c['club_id'] }}>
+        {{ c['name'] }}
+      </option>
+      {% endfor %}
+    </select><br><br>
+
+    <label>Position</label><br>
+    <select name="position_id">
+      <option value="">-- Select Position --</option>
+      {% for pos in positions %}
+      <option value="{{ pos['position_id'] }}" {{ 'selected' if player and player['position_id'] == pos['position_id'] }}>
+        {{ pos['position_name'] }}
+      </option>
+      {% endfor %}
+    </select><br><br>
+
+    <button type="submit">Save</button>
+  </form>
+
+</body>
+</html>

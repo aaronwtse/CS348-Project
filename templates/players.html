@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<body>
+  <h1>Players</h1>
+  <a href="/">Home</a> |
+  <a href="/players/add">Add Player</a>
+
+  <br><br>
+
+  <table border="1">
+    <tr>
+      <th>Name</th>
+      <th>Age</th>
+      <th>Nationality</th>
+      <th>Position</th>
+      <th>Club</th>
+      <th>Foot</th>
+      <th>Jersey #</th>
+      <th>Actions</th>
+    </tr>
+    {% for p in players %}
+    <tr>
+      <td>{{ p['name'] }}</td>
+      <td>{{ p['age'] }}</td>
+      <td>{{ p['nationality'] }}</td>
+      <td>{{ p['position_name'] }}</td>
+      <td>{{ p['club_name'] }}</td>
+      <td>{{ p['strong_foot'] }}</td>
+      <td>{{ p['jersey_number'] }}</td>
+      <td>
+        <a href="/players/edit/{{ p['player_id'] }}">Edit</a>
+        <form action="/players/delete/{{ p['player_id'] }}" method="POST" style="display:inline">
+          <button type="submit" onclick="return confirm('Delete this player?')">Delete</button>
+        </form>
+      </td>
+    </tr>
+    {% endfor %}
+  </table>
+
+</body>
+</html>
