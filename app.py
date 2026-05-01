@@ -50,19 +50,24 @@ def add_player():
     positions = db.execute('SELECT * FROM positions ORDER BY position_name').fetchall()
 
     if request.method == 'POST':
-        db.execute('''
-            INSERT INTO players (name, age, nationality, strong_foot, jersey_number, club_id, position_id)
-            VALUES (?, ?, ?, ?, ?, ?, ?)
-        ''', (
-            request.form['name'],
-            request.form['age'],
-            request.form['nationality'],
-            request.form['strong_foot'],
-            request.form['jersey_number'] or None,
-            request.form['club_id'] or None,
-            request.form['position_id'] or None
-        ))
-        db.commit()
+        try:
+            db.execute('BEGIN')
+            db.execute('''
+                INSERT INTO players (name, age, nationality, strong_foot, jersey_number, club_id, position_id)
+                VALUES (?, ?, ?, ?, ?, ?, ?)
+            ''', (
+                request.form['name'],
+                request.form['age'],
+                request.form['nationality'],
+                request.form['strong_foot'],
+                request.form['jersey_number'] or None,
+                request.form['club_id'] or None,
+                request.form['position_id'] or None
+            ))
+            db.commit()
+        except Exception as e:
+            db.rollback()
+            raise e
         return redirect(url_for('players'))
 
     return render_template('player_form.html', player=None, clubs=clubs, positions=positions)
@@ -76,21 +81,26 @@ def edit_player(player_id):
     positions = db.execute('SELECT * FROM positions ORDER BY position_name').fetchall()
 
     if request.method == 'POST':
-        db.execute('''
-            UPDATE players
-            SET name=?, age=?, nationality=?, strong_foot=?, jersey_number=?, club_id=?, position_id=?
-            WHERE player_id=?
-        ''', (
-            request.form['name'],
-            request.form['age'],
-            request.form['nationality'],
-            request.form['strong_foot'],
-            request.form['jersey_number'] or None,
-            request.form['club_id'] or None,
-            request.form['position_id'] or None,
-            player_id
-        ))
-        db.commit()
+        try:
+            db.execute('BEGIN')
+            db.execute('''
+                UPDATE players
+                SET name=?, age=?, nationality=?, strong_foot=?, jersey_number=?, club_id=?, position_id=?
+                WHERE player_id=?
+            ''', (
+                request.form['name'],
+                request.form['age'],
+                request.form['nationality'],
+                request.form['strong_foot'],
+                request.form['jersey_number'] or None,
+                request.form['club_id'] or None,
+                request.form['position_id'] or None,
+                player_id
+            ))
+            db.commit()
+        except Exception as e:
+            db.rollback()
+            raise e
         return redirect(url_for('players'))
 
     return render_template('player_form.html', player=player, clubs=clubs, positions=positions)
@@ -99,8 +109,12 @@ def edit_player(player_id):
 @app.route('/players/delete/<int:player_id>', methods=['POST'])
 def delete_player(player_id):
     db = get_db()
-    db.execute('DELETE FROM players WHERE player_id = ?', (player_id,))
-    db.commit()
+    try: 
+        db.execute('DELETE FROM players WHERE player_id = ?', (player_id,))
+        db.commit()
+    except Exception as e:
+        db.rollback()
+        raise e
     return redirect(url_for('players'))
 
 
